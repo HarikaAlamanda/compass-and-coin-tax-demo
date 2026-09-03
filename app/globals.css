@@ -3,24 +3,35 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --brand-orange: #f15a24;
+  --brand-orange-light: #f36b3d;
+  --brand-red: #f2292e;
+  --muted-text: #666666;
+  --surface: #f7f7f5;
+  --border-color: #e7e7e7;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-light: var(--brand-orange-light);
+  --color-brand-red: var(--brand-red);
+  --color-muted-text: var(--muted-text);
+  --color-surface: var(--surface);
+  --color-border-color: var(--border-color);
+  --font-sans: var(--font-inter);
+  --max-width-content: 1280px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-orange);
+  outline-offset: 2px;
 }
