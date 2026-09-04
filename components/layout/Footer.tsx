@@ -9,13 +9,13 @@ export default function Footer() {
   return (
     <footer className="border-t border-border-color bg-surface">
       <Container className="py-12">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <p className="text-base font-semibold text-foreground">
               Compass &amp; Coin
             </p>
             <p className="mt-3 max-w-xs text-sm leading-6 text-muted-text">
-              Your complete UAE property, finance and compliance ecosystem.
+              Tax Services demo &mdash; educational and indicative information only.
             </p>
           </div>
 
@@ -36,33 +36,15 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-foreground">Services</p>
+            <p className="text-sm font-semibold text-foreground">Contact</p>
             <ul className="mt-3 space-y-2 text-sm text-muted-text">
-              <li>Real Estate</li>
-              <li>Mortgage</li>
-              <li>Tax</li>
-              <li>AML &amp; Compliance</li>
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-sm font-semibold text-foreground">Legal</p>
-            <ul className="mt-3 space-y-2">
               <li>
-                <Link
-                  href="/privacy"
-                  className="text-sm text-muted-text transition-colors hover:text-brand-orange"
+                <a
+                  href="mailto:compassandcoinsales@gmail.com"
+                  className="transition-colors hover:text-brand-orange"
                 >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/terms"
-                  className="text-sm text-muted-text transition-colors hover:text-brand-orange"
-                >
-                  Terms
-                </Link>
+                  compassandcoinsales@gmail.com
+                </a>
               </li>
             </ul>
           </div>
@@ -70,15 +52,14 @@ export default function Footer() {
 
         <Disclaimer className="mt-10">
           Compass &amp; Coin provides educational and indicative information
-          only. Mortgage, tax and AML tools on this site are demo
-          self-assessments, not financial, legal or regulatory advice, and do
-          not constitute bank approval, tax filing or official compliance
-          certification. Always seek professional guidance for your specific
+          only. This page is a demonstration for learning and portfolio
+          purposes and does not constitute financial, legal or regulatory
+          advice. Always seek professional guidance for your specific
           circumstances.
         </Disclaimer>
 
         <p className="mt-8 text-xs text-muted-text">
-          &copy; {year} Compass &amp; Coin. All rights reserved.
+          &copy; {year} Compass &amp; Coin. Demo project.
         </p>
       </Container>
     </footer>

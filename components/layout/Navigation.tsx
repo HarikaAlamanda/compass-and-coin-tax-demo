@@ -1,12 +1,11 @@
 import Link from "next/link";
 
 export const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Mortgage", href: "/mortgage" },
-  { label: "Tax", href: "/tax" },
-  { label: "AML", href: "/aml" },
-  { label: "Resources", href: "/resources" },
-  { label: "Contact", href: "/contact" },
+  { label: "Services", href: "#services" },
+  { label: "Why Us", href: "#why-us" },
+  { label: "Process", href: "#process" },
+  { label: "FAQ", href: "#faq" },
+  { label: "Contact", href: "#contact" },
 ];
 
 type NavigationProps = {

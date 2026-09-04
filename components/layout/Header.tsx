@@ -31,7 +31,7 @@ export default function Header() {
         <Navigation className="hidden items-center gap-8 lg:flex" />
 
         <div className="hidden lg:block">
-          <Button href="/contact" variant="primary">
+          <Button href="#contact" variant="primary">
             Request a Consultation
           </Button>
         </div>
@@ -75,7 +75,7 @@ export default function Header() {
               onLinkClick={() => setMenuOpen(false)}
             />
             <Button
-              href="/contact"
+              href="#contact"
               variant="primary"
               className="w-full"
               onClick={() => setMenuOpen(false)}

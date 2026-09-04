@@ -10,9 +10,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Compass & Coin | Property, Finance & Compliance in the UAE",
+  title: "Compass & Coin | Tax Services (Demo)",
   description:
-    "Explore property, mortgage, tax and AML services designed for the UAE market.",
+    "Educational demo of a Tax Services landing page for Compass & Coin, a Dubai/UAE property, mortgage, tax and AML compliance business.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
