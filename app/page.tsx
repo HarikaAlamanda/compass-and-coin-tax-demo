@@ -10,6 +10,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import Badge from "@/components/ui/Badge";
 import ServiceCard from "@/components/marketing/ServiceCard";
 import ContactForm from "@/components/forms/ContactForm";
+import TaxCalculator from "@/components/calculators/TaxCalculator";
 import {
   TAX_SERVICES,
   WHY_CHOOSE_US,
@@ -79,6 +80,22 @@ export default function Home() {
                 </p>
               </div>
             ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Tax Calculator */}
+      <section id="tax-calculator" className="scroll-mt-20 bg-white">
+        <Container className="max-w-2xl py-16 sm:py-20">
+          <SectionHeading
+            eyebrow="Try it out"
+            title="Tax Calculator"
+            subtitle="A demo calculator to show how this flow could work — no real tax amount is calculated."
+            align="center"
+            className="mx-auto"
+          />
+          <div className="mt-10 rounded-xl border border-border-color bg-surface p-6 sm:p-8">
+            <TaxCalculator />
           </div>
         </Container>
       </section>

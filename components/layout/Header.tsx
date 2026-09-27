@@ -23,7 +23,7 @@ export default function Header() {
             alt="Compass & Coin"
             width={1280}
             height={1024}
-            className="h-8 w-auto sm:h-10"
+            className="h-12 w-auto sm:h-16"
             priority
           />
         </Link>
