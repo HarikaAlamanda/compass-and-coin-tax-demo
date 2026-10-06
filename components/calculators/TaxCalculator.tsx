@@ -7,6 +7,7 @@ import {
   calculateDemoTax,
   TaxCalculatorResult,
 } from "@/lib/taxCalculator";
+import { fetchDemoTax, TaxApiError } from "@/lib/taxApiClient";
 
 type FormValues = {
   annualRevenue: string;
@@ -56,6 +57,8 @@ export default function TaxCalculator() {
   const [values, setValues] = useState<FormValues>(initialValues);
   const [errors, setErrors] = useState<FormErrors>({});
   const [result, setResult] = useState<TaxCalculatorResult | null>(null);
+  const [apiNotice, setApiNotice] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleChange<K extends keyof FormValues>(
     field: K,
@@ -64,19 +67,34 @@ export default function TaxCalculator() {
     setValues((prev) => ({ ...prev, [field]: value }));
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const validationErrors = validate(values);
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      setResult(
-        calculateDemoTax({
-          annualRevenue: Number(values.annualRevenue),
-          businessType: values.businessType,
-          location: values.location as "mainland" | "freezone",
-        })
-      );
+      const input = {
+        annualRevenue: Number(values.annualRevenue),
+        businessType: values.businessType,
+        location: values.location as "mainland" | "freezone",
+      };
+
+      setIsSubmitting(true);
+      setApiNotice(null);
+
+      try {
+        const apiResult = await fetchDemoTax(input);
+        setResult(apiResult);
+      } catch (error) {
+        setApiNotice(
+          error instanceof TaxApiError
+            ? error.message
+            : "Could not reach the demo tax service. Showing a local demo result instead."
+        );
+        setResult(calculateDemoTax(input));
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   }
 
@@ -84,6 +102,7 @@ export default function TaxCalculator() {
     setValues(initialValues);
     setErrors({});
     setResult(null);
+    setApiNotice(null);
   }
 
   return (
@@ -176,13 +195,18 @@ export default function TaxCalculator() {
           )}
         </div>
 
-        <Button type="submit" className="w-full sm:w-auto">
-          Calculate
+        <Button type="submit" className="w-full sm:w-auto" disabled={isSubmitting}>
+          {isSubmitting ? "Calculating..." : "Calculate"}
         </Button>
       </form>
 
       {result && (
         <div className="space-y-4">
+          {apiNotice && (
+            <p className="rounded-md border border-brand-orange bg-orange-50 px-3 py-2 text-xs text-foreground">
+              {apiNotice}
+            </p>
+          )}
           <div className="rounded-xl border border-border-color bg-white p-6">
             <h3 className="text-base font-semibold text-foreground">
               Demo Calculation
