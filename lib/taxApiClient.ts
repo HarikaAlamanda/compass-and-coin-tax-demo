@@ -8,8 +8,11 @@ export class TaxApiError extends Error {}
 
 type TaxDemoApiResponse = {
   annual_revenue: number;
+  taxable_income: number;
   business_type: string;
   location: "mainland" | "freezone";
+  estimated_tax: number;
+  applicable_rate: string;
   note: string;
 };
 
@@ -24,8 +27,10 @@ export async function fetchDemoTax(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         annual_revenue: input.annualRevenue,
+        taxable_income: input.taxableIncome,
         business_type: input.businessType,
         location: input.location,
+        is_qualifying_free_zone_person: input.isQualifyingFreeZonePerson,
       }),
     });
   } catch {
@@ -44,8 +49,11 @@ export async function fetchDemoTax(
 
   return {
     annualRevenue: data.annual_revenue,
+    taxableIncome: data.taxable_income,
     businessType: data.business_type,
     location: data.location,
+    estimatedTax: data.estimated_tax,
+    applicableRate: data.applicable_rate,
     note: data.note,
   };
 }

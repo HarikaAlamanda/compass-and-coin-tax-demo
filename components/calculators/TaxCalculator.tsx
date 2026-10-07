@@ -11,16 +11,20 @@ import { fetchDemoTax, TaxApiError } from "@/lib/taxApiClient";
 
 type FormValues = {
   annualRevenue: string;
+  taxableIncome: string;
   businessType: string;
   location: "mainland" | "freezone" | "";
+  isQualifyingFreeZonePerson: "yes" | "no" | "";
 };
 
 type FormErrors = Partial<Record<keyof FormValues, string>>;
 
 const initialValues: FormValues = {
   annualRevenue: "",
+  taxableIncome: "",
   businessType: "",
   location: "",
+  isQualifyingFreeZonePerson: "",
 };
 
 const BUSINESS_TYPES = [
@@ -42,12 +46,26 @@ function validate(values: FormValues): FormErrors {
     }
   }
 
+  if (!values.taxableIncome.trim()) {
+    errors.taxableIncome = "Please enter taxable income.";
+  } else {
+    const taxableIncome = Number(values.taxableIncome);
+    if (!Number.isFinite(taxableIncome) || taxableIncome < 0) {
+      errors.taxableIncome = "Please enter a valid non-negative number.";
+    }
+  }
+
   if (!values.businessType) {
     errors.businessType = "Please select a business type.";
   }
 
   if (!values.location) {
     errors.location = "Please select Mainland or Free Zone.";
+  }
+
+  if (values.location === "freezone" && !values.isQualifyingFreeZonePerson) {
+    errors.isQualifyingFreeZonePerson =
+      "Please select whether this is a Qualifying Free Zone Person.";
   }
 
   return errors;
@@ -75,8 +93,13 @@ export default function TaxCalculator() {
     if (Object.keys(validationErrors).length === 0) {
       const input = {
         annualRevenue: Number(values.annualRevenue),
+        taxableIncome: Number(values.taxableIncome),
         businessType: values.businessType,
         location: values.location as "mainland" | "freezone",
+        isQualifyingFreeZonePerson:
+          values.location === "freezone"
+            ? values.isQualifyingFreeZonePerson === "yes"
+            : undefined,
       };
 
       setIsSubmitting(true);
@@ -129,6 +152,31 @@ export default function TaxCalculator() {
           {errors.annualRevenue && (
             <p id="annualRevenue-error" className="mt-1 text-xs text-brand-red">
               {errors.annualRevenue}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label
+            htmlFor="taxableIncome"
+            className="block text-sm font-medium text-foreground"
+          >
+            Taxable Income (AED)
+          </label>
+          <input
+            id="taxableIncome"
+            type="number"
+            value={values.taxableIncome}
+            onChange={(e) => handleChange("taxableIncome", e.target.value)}
+            className="mt-1 w-full rounded-md border border-border-color px-3 py-2 text-sm focus:border-brand-orange focus:outline-none focus:ring-1 focus:ring-brand-orange"
+            aria-invalid={Boolean(errors.taxableIncome)}
+            aria-describedby={
+              errors.taxableIncome ? "taxableIncome-error" : undefined
+            }
+          />
+          {errors.taxableIncome && (
+            <p id="taxableIncome-error" className="mt-1 text-xs text-brand-red">
+              {errors.taxableIncome}
             </p>
           )}
         </div>
@@ -195,6 +243,46 @@ export default function TaxCalculator() {
           )}
         </div>
 
+        {values.location === "freezone" && (
+          <div>
+            <label
+              htmlFor="isQualifyingFreeZonePerson"
+              className="block text-sm font-medium text-foreground"
+            >
+              Qualifying Free Zone Person?
+            </label>
+            <select
+              id="isQualifyingFreeZonePerson"
+              value={values.isQualifyingFreeZonePerson}
+              onChange={(e) =>
+                handleChange(
+                  "isQualifyingFreeZonePerson",
+                  e.target.value as FormValues["isQualifyingFreeZonePerson"]
+                )
+              }
+              className="mt-1 w-full rounded-md border border-border-color px-3 py-2 text-sm focus:border-brand-orange focus:outline-none focus:ring-1 focus:ring-brand-orange"
+              aria-invalid={Boolean(errors.isQualifyingFreeZonePerson)}
+              aria-describedby={
+                errors.isQualifyingFreeZonePerson
+                  ? "isQualifyingFreeZonePerson-error"
+                  : undefined
+              }
+            >
+              <option value="">Select Yes or No</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+            {errors.isQualifyingFreeZonePerson && (
+              <p
+                id="isQualifyingFreeZonePerson-error"
+                className="mt-1 text-xs text-brand-red"
+              >
+                {errors.isQualifyingFreeZonePerson}
+              </p>
+            )}
+          </div>
+        )}
+
         <Button type="submit" className="w-full sm:w-auto" disabled={isSubmitting}>
           {isSubmitting ? "Calculating..." : "Calculate"}
         </Button>
@@ -219,6 +307,12 @@ export default function TaxCalculator() {
                 </dd>
               </div>
               <div className="flex justify-between gap-4">
+                <dt>Taxable Income</dt>
+                <dd className="text-foreground">
+                  AED {result.taxableIncome.toLocaleString()}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-4">
                 <dt>Business Type</dt>
                 <dd className="text-foreground">{result.businessType}</dd>
               </div>
@@ -228,8 +322,17 @@ export default function TaxCalculator() {
                   {result.location === "mainland" ? "Mainland" : "Free Zone"}
                 </dd>
               </div>
+              <div className="flex justify-between gap-4">
+                <dt>Estimated Corporate Tax</dt>
+                <dd className="text-foreground">
+                  AED {result.estimatedTax.toLocaleString()}
+                </dd>
+              </div>
             </dl>
             <p className="mt-4 text-sm leading-6 text-muted-text">
+              {result.applicableRate}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-muted-text">
               {result.note}
             </p>
             <Button
@@ -243,9 +346,12 @@ export default function TaxCalculator() {
           </div>
 
           <Disclaimer title="Demo / Indicative Disclaimer">
-            This is a demo/indicative calculator only. It does not calculate
-            actual UAE tax liability or represent official UAE tax rules.
-            Consult a qualified tax professional for actual tax calculations.
+            This calculator provides a basic indicative UAE Corporate Tax
+            estimate based on the inputs provided. It does not implement all
+            UAE Corporate Tax rules, exemptions, reliefs, deductions, or Free
+            Zone conditions. It is not tax advice. Consult a qualified UAE
+            tax professional for an actual tax calculation. This is not an
+            official UAE tax calculator.
           </Disclaimer>
         </div>
       )}
